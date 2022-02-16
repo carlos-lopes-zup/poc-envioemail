@@ -1,13 +1,18 @@
 package com.envioemail.zup.envioemailpoc.input;
 
 import lombok.*;
+import org.hibernate.validator.constraints.Length;
 
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
+@Data
 @Builder
 @Getter
 @Setter
@@ -15,12 +20,36 @@ import java.util.Locale;
 @AllArgsConstructor
 public class OrderData implements Serializable {
 
+    /**
+     *
+     */
+    private static final long serialVersionUID = 1L;
+
+    @NotBlank(message="Preenchimento de nome é obrigatório")
+    @Length(min=3, max=120, message="O tamanho deve estar entre 5 e 120 caracteres")
     private String nomeCliente;
+    @Email
     private String emailCliente;
+    @NotNull(message="Não pode ser nulo")
     private Integer orderNumber;
+    @NotNull(message="Não pode ser nulo")
     private Double totalOrder;
     private List<ProductData> prods = new ArrayList<ProductData>();
 
+    public Double getTotalOrder() {
+        return somaTotal();
+    }
+
+    public Double somaTotal(){
+
+        Double total = 0.;
+
+        for (int i = 0; i < prods.size(); i++){
+            total = total +prods.get(i).getSubTotal();
+        }
+
+        return total;
+    }
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder();

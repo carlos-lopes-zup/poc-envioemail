@@ -2,9 +2,13 @@ package com.envioemail.zup.envioemailpoc.resource;
 
 import com.envioemail.zup.envioemailpoc.input.OrderData;
 import com.envioemail.zup.envioemailpoc.input.ProductData;
+import com.envioemail.zup.envioemailpoc.input.dto.OrderRecusedDto;
+import com.envioemail.zup.envioemailpoc.service.OrderDataService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -13,10 +17,22 @@ import java.util.List;
 @RequestMapping(value="/ordersemails")
 public class OrderDataResource {
 
-    @PostMapping
-    public ResponseEntity<String> sendOrdersEmails(@RequestBody OrderData orders){
+    @Autowired
+    private OrderDataService orderDataService;
 
-        System.out.println("orders" +orders);
+    @PostMapping(value = "/pedidoconfirmado")
+    public ResponseEntity<String> sendOrdersConfirmationEmails(@Valid @RequestBody OrderData orders){
+
+        orderDataService.sendMailOrderConfirmation(orders);
+
+        return ResponseEntity.ok().body("Enviado");
+    }
+
+    @PostMapping(value = "/pedidorecusado")
+    public ResponseEntity<String> sendOrdersRecusedEmails(@Valid @RequestBody OrderRecusedDto orders){
+
+        orderDataService.sendMailOrderRecusaded(orders);
+
         return ResponseEntity.ok().body("Enviado");
     }
 
